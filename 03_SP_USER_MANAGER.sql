@@ -1,59 +1,61 @@
 ---------------- STORED PROCEDURES  -- PersonME --------------------
 
 -- NOTA: Copie, pegue y ejecute este script en su gestor de bases de datos (preferiblemente SQL Server). 
--- Asegúrese de ajustar la sintaxis según sea necesario, sin modificar los valores de las columnas.
+-- AsegÃºrese de ajustar la sintaxis segÃºn sea necesario, sin modificar los valores de las columnas.
 
 -------------- CREATION INFORMATION -------------------
 
 -- CREATED BY: JHONATTAN HALCON CASALLAS FELIPE
 -- PROJECT: USER_MANAGER
 -- CREATION-DATE: 20/06/2025
--- DESCRPTION: Procedimientos almacenados responsables de gestionar el proceso CRUD para el control de usuarios básicos, brindando soporte a la ejecución del proyecto desarrollado en .NET 8.
+-- DESCRPTION: Procedimientos almacenados responsables de gestionar el proceso CRUD para el control de usuarios bÃ¡sicos, brindando soporte a la ejecuciÃ³n del proyecto desarrollado en .NET 8.
 
 ------------------------------------------------------
 
 CREATE PROCEDURE [UMA].[SP_GET_USERS]
 AS
 BEGIN
-	SELECT 
-		USU.ID_USER,
-		USU.NAME_USER,
-		USU.BIRTH_DATE,
-		USU.ID_GENDER,
-		GEN.GENDER
+SELECT 
+		USU.ID_USER AS IdUser,
+		USU.NAME_USER AS NameUser,
+		USU.BIRTH_DATE AS BirthDate,
+		GEN.GENDER AS Gender,
+		USU.ID_GENDER AS IdGender 
 	FROM [UMA].[USERS] USU
 	LEFT JOIN [UMA].[GENDER] GEN ON USU.ID_GENDER = GEN.ID_GENDER;
-END;
+END
 GO
 
 
+
 CREATE PROCEDURE [UMA].[SP_GET_USER_BY_ID]
-	@ID_USER INT
+    @ID_USER INT
 AS
 BEGIN
-SET NOCOUNT ON;
+    SET NOCOUNT ON;
+
     IF NOT EXISTS (SELECT 1 FROM [UMA].[USERS] WHERE ID_USER = @ID_USER)
     BEGIN
         RAISERROR('No user was found with the specified User Id.', 16, 1);
         RETURN;
     END
 
-	SELECT 
-		USU.ID_USER,
-		USU.NAME_USER,
-		USU.BIRTH_DATE,
-		USU.ID_GENDER,
-		GEN.GENDER
-	FROM [UMA].[USERS] USU
-	LEFT JOIN [UMA].[GENDER] GEN ON USU.ID_GENDER = GEN.ID_GENDER
-	WHERE USU.ID_USER = @ID_USER
+    SELECT 
+		USU.ID_USER AS IdUser,
+        USU.NAME_USER AS NameUser,
+		USU.BIRTH_DATE AS BirthDate,
+        USU.ID_GENDER AS IdGender,
+        GEN.GENDER AS Gender
+    FROM [UMA].[USERS] USU
+    LEFT JOIN [UMA].[GENDER] GEN ON USU.ID_GENDER = GEN.ID_GENDER
+    WHERE USU.ID_USER = @ID_USER
 END;
-GO
+
 
 
 CREATE PROCEDURE [UMA].[SP_INSERT_USER]
 	@NameUser NVARCHAR(100),
-    @DateOfBirth DATE,
+    @BirthDate DATE,
     @IdGender INT
 AS
 BEGIN
@@ -62,7 +64,7 @@ BEGIN
         BEGIN TRANSACTION;
 
         IF @NameUser IS NULL OR LTRIM(RTRIM(@NameUser)) = ''
-            OR @DateOfBirth IS NULL
+            OR @BirthDate IS NULL
 			OR @IdGender IS NULL
         BEGIN
             RAISERROR('All required fields must be provided and cannot be empty.', 16, 1);
@@ -77,7 +79,7 @@ BEGIN
 			RETURN;
 		END
 
-        IF @DateOfBirth NOT BETWEEN DATEADD(YEAR, -95, CAST(GETDATE() AS DATE)) AND DATEADD(YEAR, -2, CAST(GETDATE() AS DATE))
+        IF @BirthDate NOT BETWEEN DATEADD(YEAR, -95, CAST(GETDATE() AS DATE)) AND DATEADD(YEAR, -2, CAST(GETDATE() AS DATE))
         BEGIN
             RAISERROR('User must be between 2 and 95 years old.', 16, 1);
             ROLLBACK TRANSACTION;
@@ -91,7 +93,7 @@ BEGIN
         )
         VALUES (
             @NameUser,
-            @DateOfBirth,
+            @BirthDate,
             @IdGender
         );
 
@@ -130,13 +132,6 @@ BEGIN
             RETURN;
         END
 
-        IF EXISTS (SELECT 1 FROM [UMA].[USERS] WHERE ID_GENDER = @IdGender)
-        BEGIN
-            RAISERROR('Gender must be selected', 16, 1);
-            ROLLBACK TRANSACTION;
-            RETURN;
-        END
-
         IF @DateOfBirth NOT BETWEEN DATEADD(YEAR, -95, CAST(GETDATE() AS DATE)) AND DATEADD(YEAR, -2, CAST(GETDATE() AS DATE))
         BEGIN
             RAISERROR('User must be between 2 and 95 years old.', 16, 1);
@@ -166,7 +161,7 @@ GO
 
 
 CREATE PROCEDURE [UMA].[SP_DELETE_USER]
-    @UserId INT
+    @IdUser INT 
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -174,14 +169,14 @@ BEGIN
 
     BEGIN TRY
 
-        IF NOT EXISTS (SELECT 1 FROM [UMA].[USERS] WHERE ID_USER = @UserId)
+        IF NOT EXISTS (SELECT 1 FROM [UMA].[USERS] WHERE ID_USER = @IdUser)
         BEGIN
             RAISERROR('No user found with the specified StudentId.', 16, 1);
             ROLLBACK TRANSACTION;
             RETURN;
         END
 
-        DELETE FROM [UMA].[USERS] WHERE ID_USER = @UserId;
+        DELETE FROM [UMA].[USERS] WHERE ID_USER = @IdUser;
 
         IF @@ROWCOUNT = 0
         BEGIN
