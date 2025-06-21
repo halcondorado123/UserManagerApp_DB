@@ -64,7 +64,7 @@ Ejecutar los scripts de creación de los siguientes SP:
 
 Clona el proyecto desde GitHub usando el siguiente comando:
 
-git clone https://github.com/tu-usuario/tu-repo-user-manager-db.git
+git clone https://github.com/halcondorado123/UserManagerApp_DB
 
 Luego, abre los archivos .sql en SQL Server Management Studio (SSMS) o Azure Data Studio y ejecútalos en el orden recomendado:
 
