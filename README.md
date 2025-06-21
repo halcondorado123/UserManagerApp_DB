@@ -77,13 +77,17 @@ Luego, abre los archivos .sql en SQL Server Management Studio (SSMS) o Azure Dat
 04_create_stored_procedures.sql
 
 ### 📝 Opción 2: Copiar y pegar los scripts
+
 También puedes navegar por el repositorio, abrir cada archivo .sql, copiar su contenido y pegarlo directamente en tu entorno SQL Server para ejecutarlo manualmente.
 
 📌 Notas adicionales
 
 ✅ Asegúrate de tener seleccionada la base de datos USER_MANAGER antes de ejecutar los scripts de tablas o procedimientos.
+
 🛡️ Los procedimientos almacenados incluyen validaciones para mantener la integridad de los datos.
+
 🔐 Es recomendable ejecutar los scripts como administrador para evitar errores de permisos.
+
 🧰 Este proceso dejará completamente configurada la base de datos necesaria para el sistema de gestión de usuarios.
 
 
