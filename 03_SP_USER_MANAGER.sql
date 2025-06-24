@@ -13,19 +13,25 @@
 ------------------------------------------------------
 
 CREATE PROCEDURE [UMA].[SP_GET_USERS]
+	@PageNumber INT,
+    @PageSize INT
 AS
 BEGIN
-SELECT 
-		USU.ID_USER AS IdUser,
-		USU.NAME_USER AS NameUser,
-		USU.BIRTH_DATE AS BirthDate,
-		GEN.GENDER AS Gender,
-		USU.ID_GENDER AS IdGender 
-	FROM [UMA].[USERS] USU
-	LEFT JOIN [UMA].[GENDER] GEN ON USU.ID_GENDER = GEN.ID_GENDER;
+    SET NOCOUNT ON;
+
+    SELECT 
+        USU.ID_USER AS IdUser,
+        USU.NAME_USER AS NameUser,
+        USU.BIRTH_DATE AS BirthDate,
+        GEN.GENDER AS Gender,
+        USU.ID_GENDER AS IdGender
+    FROM [UMA].[USERS] USU
+    LEFT JOIN [UMA].[GENDER] GEN ON USU.ID_GENDER = GEN.ID_GENDER
+    ORDER BY USU.ID_USER
+    OFFSET (@PageNumber - 1) * @PageSize ROWS
+    FETCH NEXT @PageSize ROWS ONLY;
 END
 GO
-
 
 
 CREATE PROCEDURE [UMA].[SP_GET_USER_BY_ID]
